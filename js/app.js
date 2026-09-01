@@ -93,7 +93,7 @@ function beep(freq = 880, duration = 0.08, gain = 0.05) {
   } catch (e) { /* audio not available, ignore */ }
 }
 
-// ---------- Speech synthesis (robotic voice) ----------
+// ---------- Speech synthesis ----------
 let voicesCache = [];
 function loadVoices() {
   voicesCache = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
@@ -103,9 +103,9 @@ if ("speechSynthesis" in window) {
   window.speechSynthesis.onvoiceschanged = loadVoices;
 }
 
-function pickRoboticVoice() {
+function pickVoice() {
   if (!voicesCache.length) return null;
-  const preferredNames = [/google uk english male/i, /microsoft david/i, /male/i, /english/i];
+  const preferredNames = [/google us english/i, /samantha/i, /microsoft aria/i, /microsoft guy/i, /natural/i];
   for (const pattern of preferredNames) {
     const match = voicesCache.find(v => pattern.test(v.name) && v.lang.startsWith("en"));
     if (match) return match;
@@ -119,10 +119,10 @@ function speak(text) {
   beep(1046, 0.06, 0.04);
 
   const utter = new SpeechSynthesisUtterance(text);
-  utter.pitch = 0.35;   // low, flat pitch for a robotic/synthetic tone
-  utter.rate = 0.98;
+  utter.pitch = 0.92;   // very slightly lowered for a calm, composed tone
+  utter.rate = 1.0;
   utter.volume = 1;
-  const voice = pickRoboticVoice();
+  const voice = pickVoice();
   if (voice) utter.voice = voice;
 
   utter.onstart = () => setStatus("SPEAKING");
