@@ -139,6 +139,16 @@ function speak(text) {
 const SpeechRecognitionImpl = window.SpeechRecognition || window.webkitSpeechRecognition;
 let recognition = null;
 
+const RECOGNITION_ERROR_MESSAGES = {
+  "no-speech": "I didn't hear anything, sir. Try speaking right after the beep.",
+  "audio-capture": "I can't reach a microphone. Please check that one is connected and selected in your browser.",
+  "not-allowed": "Microphone access is blocked. Please allow microphone permission for this site and try again.",
+  "network": "Voice recognition needs an internet connection to reach the speech service, and the request failed. Please check your connection.",
+  "aborted": null,
+};
+
+let gotSpeechResult = false;
+
 if (SpeechRecognitionImpl) {
   recognition = new SpeechRecognitionImpl();
   recognition.continuous = false;
@@ -146,13 +156,24 @@ if (SpeechRecognitionImpl) {
   recognition.lang = "en-US";
 
   recognition.onresult = (event) => {
+    gotSpeechResult = true;
     const transcript = event.results[0][0].transcript;
     els.input.value = transcript;
     handleUserInput(transcript);
   };
-  recognition.onerror = () => setStatus("STANDBY");
+  recognition.onerror = (event) => {
+    setStatus("STANDBY");
+    const message = RECOGNITION_ERROR_MESSAGES[event.error];
+    if (message) appendMessage("bot", message);
+    else if (message === undefined) appendMessage("bot", `Voice recognition error: ${event.error}.`);
+  };
   recognition.onend = () => {
-    if (els.statusText.textContent === "LISTENING…") setStatus("STANDBY");
+    if (els.statusText.textContent === "LISTENING…") {
+      setStatus("STANDBY");
+      if (!gotSpeechResult) {
+        appendMessage("bot", "I didn't catch that, sir. Please try again and speak clearly right after the beep.");
+      }
+    }
   };
 } else {
   els.micBtn.disabled = true;
@@ -162,6 +183,7 @@ if (SpeechRecognitionImpl) {
 els.micBtn.addEventListener("click", () => {
   if (!recognition) return;
   window.speechSynthesis && window.speechSynthesis.cancel();
+  gotSpeechResult = false;
   setStatus("LISTENING");
   beep(1200, 0.05, 0.04);
   try { recognition.start(); } catch (e) { /* already started */ }
