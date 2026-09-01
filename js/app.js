@@ -292,8 +292,8 @@ async function generateResponse(rawText) {
     return "You're very welcome. Always glad to help.";
   }
 
-  if (matchesAny(text, ["hello", "hi sniper", "hey sniper", "good morning", "good afternoon", "good evening"])) {
-    return "Hello. Systems fully operational. What can I help you with?";
+  if (matchesAny(text, ["hello", "hey sniper", "good morning", "good afternoon", "good evening"]) || /\bhi\b/i.test(text)) {
+    return "Hi sir, how can I assist you?";
   }
 
   if (matchesAny(text, ["joke", "make me laugh"])) {
