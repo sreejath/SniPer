@@ -93,7 +93,7 @@ function beep(freq = 880, duration = 0.08, gain = 0.05) {
   } catch (e) { /* audio not available, ignore */ }
 }
 
-// ---------- Speech synthesis (robotic voice) ----------
+// ---------- Speech synthesis ----------
 let voicesCache = [];
 function loadVoices() {
   voicesCache = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
@@ -103,9 +103,9 @@ if ("speechSynthesis" in window) {
   window.speechSynthesis.onvoiceschanged = loadVoices;
 }
 
-function pickRoboticVoice() {
+function pickVoice() {
   if (!voicesCache.length) return null;
-  const preferredNames = [/google uk english male/i, /microsoft david/i, /male/i, /english/i];
+  const preferredNames = [/google us english/i, /samantha/i, /microsoft aria/i, /microsoft guy/i, /natural/i];
   for (const pattern of preferredNames) {
     const match = voicesCache.find(v => pattern.test(v.name) && v.lang.startsWith("en"));
     if (match) return match;
@@ -119,10 +119,10 @@ function speak(text) {
   beep(1046, 0.06, 0.04);
 
   const utter = new SpeechSynthesisUtterance(text);
-  utter.pitch = 0.35;   // low, flat pitch for a robotic/synthetic tone
-  utter.rate = 0.98;
+  utter.pitch = 0.92;   // very slightly lowered for a calm, composed tone
+  utter.rate = 1.0;
   utter.volume = 1;
-  const voice = pickRoboticVoice();
+  const voice = pickVoice();
   if (voice) utter.voice = voice;
 
   utter.onstart = () => setStatus("SPEAKING");
@@ -139,6 +139,16 @@ function speak(text) {
 const SpeechRecognitionImpl = window.SpeechRecognition || window.webkitSpeechRecognition;
 let recognition = null;
 
+const RECOGNITION_ERROR_MESSAGES = {
+  "no-speech": "I didn't hear anything, sir. Try speaking right after the beep.",
+  "audio-capture": "I can't reach a microphone. Please check that one is connected and selected in your browser.",
+  "not-allowed": "Microphone access is blocked. Please allow microphone permission for this site and try again.",
+  "network": "Voice recognition needs an internet connection to reach the speech service, and the request failed. Please check your connection.",
+  "aborted": null,
+};
+
+let gotSpeechResult = false;
+
 if (SpeechRecognitionImpl) {
   recognition = new SpeechRecognitionImpl();
   recognition.continuous = false;
@@ -146,13 +156,24 @@ if (SpeechRecognitionImpl) {
   recognition.lang = "en-US";
 
   recognition.onresult = (event) => {
+    gotSpeechResult = true;
     const transcript = event.results[0][0].transcript;
     els.input.value = transcript;
     handleUserInput(transcript);
   };
-  recognition.onerror = () => setStatus("STANDBY");
+  recognition.onerror = (event) => {
+    setStatus("STANDBY");
+    const message = RECOGNITION_ERROR_MESSAGES[event.error];
+    if (message) appendMessage("bot", message);
+    else if (message === undefined) appendMessage("bot", `Voice recognition error: ${event.error}.`);
+  };
   recognition.onend = () => {
-    if (els.statusText.textContent === "LISTENING…") setStatus("STANDBY");
+    if (els.statusText.textContent === "LISTENING…") {
+      setStatus("STANDBY");
+      if (!gotSpeechResult) {
+        appendMessage("bot", "I didn't catch that, sir. Please try again and speak clearly right after the beep.");
+      }
+    }
   };
 } else {
   els.micBtn.disabled = true;
@@ -162,6 +183,7 @@ if (SpeechRecognitionImpl) {
 els.micBtn.addEventListener("click", () => {
   if (!recognition) return;
   window.speechSynthesis && window.speechSynthesis.cancel();
+  gotSpeechResult = false;
   setStatus("LISTENING");
   beep(1200, 0.05, 0.04);
   try { recognition.start(); } catch (e) { /* already started */ }
@@ -270,8 +292,8 @@ async function generateResponse(rawText) {
     return "You're very welcome. Always glad to help.";
   }
 
-  if (matchesAny(text, ["hello", "hi sniper", "hey sniper", "good morning", "good afternoon", "good evening"])) {
-    return "Hello. Systems fully operational. What can I help you with?";
+  if (matchesAny(text, ["hello", "hey sniper", "good morning", "good afternoon", "good evening"]) || /\bhi\b/i.test(text)) {
+    return "Hi sir, how can I assist you?";
   }
 
   if (matchesAny(text, ["joke", "make me laugh"])) {
