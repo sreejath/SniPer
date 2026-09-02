@@ -3,7 +3,6 @@ name: Deploy SniPer to GitHub Pages
 on:
   push:
     branches:
-      - claude/sniper-jarvis-web-app-2n94x1
       - main
   workflow_dispatch:
 
