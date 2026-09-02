@@ -163,6 +163,7 @@ if (SpeechRecognitionImpl) {
     handleUserInput(transcript);
   };
   recognition.onerror = (event) => {
+    if (gotSpeechResult) return; // a trailing error after a delivered result is harmless noise
     if (event.error === "network" && !retriedAfterNetworkError) {
       retriedAfterNetworkError = true;
       try { recognition.start(); return; } catch (e) { /* fall through to reporting */ }
