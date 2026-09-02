@@ -143,11 +143,12 @@ const RECOGNITION_ERROR_MESSAGES = {
   "no-speech": "I didn't hear anything, sir. Try speaking right after the beep.",
   "audio-capture": "I can't reach a microphone. Please check that one is connected and selected in your browser.",
   "not-allowed": "Microphone access is blocked. Please allow microphone permission for this site and try again.",
-  "network": "Voice recognition needs an internet connection to reach the speech service, and the request failed. Please check your connection.",
+  "network": "I can't reach the speech recognition service. This usually isn't your internet connection — it's more often a browser/network policy blocking Chrome's speech API specifically. Try: a different network (e.g. phone hotspot), disabling ad-block/privacy extensions for this site, or checking chrome://version — Chromium builds without Google's API keys can't use voice recognition at all.",
   "aborted": null,
 };
 
 let gotSpeechResult = false;
+let retriedAfterNetworkError = false;
 
 if (SpeechRecognitionImpl) {
   recognition = new SpeechRecognitionImpl();
@@ -162,6 +163,10 @@ if (SpeechRecognitionImpl) {
     handleUserInput(transcript);
   };
   recognition.onerror = (event) => {
+    if (event.error === "network" && !retriedAfterNetworkError) {
+      retriedAfterNetworkError = true;
+      try { recognition.start(); return; } catch (e) { /* fall through to reporting */ }
+    }
     setStatus("STANDBY");
     const message = RECOGNITION_ERROR_MESSAGES[event.error];
     if (message) appendMessage("bot", message);
@@ -184,6 +189,7 @@ els.micBtn.addEventListener("click", () => {
   if (!recognition) return;
   window.speechSynthesis && window.speechSynthesis.cancel();
   gotSpeechResult = false;
+  retriedAfterNetworkError = false;
   setStatus("LISTENING");
   beep(1200, 0.05, 0.04);
   try { recognition.start(); } catch (e) { /* already started */ }
