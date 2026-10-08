@@ -121,6 +121,22 @@ const TOPICS = [
     lesson: "A force is a push or a pull that can make an object start moving, stop moving, speed up, slow down, or change direction. Gravity is a force that pulls objects toward each other — it's why things fall down instead of floating away. Friction is another force that slows things down when two surfaces rub together.",
     funFact: "Fun fact: without friction, you wouldn't be able to walk — your shoes would just slide right out from under you!",
     question: "Want to hear Newton's three laws of motion explained simply?"
+  },
+  {
+    id: "what-makes-a-superhero",
+    name: "What Makes a Superhero",
+    keywords: ["superhero", "superheroes", "super hero", "super heroes", "hero"],
+    lesson: "A superhero isn't just about super strength or flashy powers — it's about choices. Every great hero shares a few things in common: courage to act even when they're scared, a strong sense of right and wrong, and a willingness to put others first. Some heroes get their powers from an accident or birth, but plenty of the best ones — like a certain armored inventor — build their powers themselves, out of pure determination and hard work.",
+    funFact: "Fun fact: the word 'hero' comes from ancient Greek, where it described someone with courage and skill admired for their brave deeds!",
+    question: "Want to hear the story of SniPer's very first suit?"
+  },
+  {
+    id: "snip-first-suit",
+    name: "SniPer's First Suit",
+    keywords: ["snip's first suit", "snip first suit", "snip i", "snip's suit", "first suit", "origin story", "snip origin"],
+    lesson: "Every great hero has an origin story, and SniPer's starts small. The very first suit wasn't shiny or perfect — it was built fast, under pressure, out of scrap parts and pure determination, just like Iron Man's rough-and-ready Mark I. It was clunky, the joints creaked, and it probably couldn't fly in a straight line. But it worked — and that's what mattered. That first suit proved the idea was possible, and every version built after it got smarter, lighter, and stronger, learning from what went wrong the time before.",
+    funFact: "Fun fact: real inventors almost never get it right on the first try — the first version of something is usually called a 'prototype,' and it's expected to be rough around the edges!",
+    question: "Want to imagine together what SniPer's NEXT suit upgrade should be able to do?"
   }
 ];
 
