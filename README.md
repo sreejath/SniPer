@@ -11,8 +11,8 @@ A retro, JARVIS-style AI assistant that runs entirely in your web browser — no
   - "What time is it?"
   - "What day is it today?"
   - "What is the current weather?" (uses your location + the free [Open-Meteo](https://open-meteo.com) API — no key required)
-- **Teaches 5th grade topics** on request — try "Teach me the solar system" or "Teach me volcanoes."
-- **Proactive teaching offers** — after every other exchange, SniPer offers to teach you a new 5th-grade topic.
+- **Teaches superhero and suit-building topics** on request — try "What makes a superhero?" or "Let's work on the helmet."
+- **Proactive teaching offers** — after every other exchange, SniPer offers to teach you a new topic.
 
 ## Running it
 
@@ -36,7 +36,7 @@ No installation needed — it's a static site.
 ```
 index.html        Markup and layout
 css/style.css      Retro HUD styling
-js/knowledge.js    5th-grade lesson content
+js/knowledge.js    Superhero/suit lesson content
 js/app.js          App logic: speech, weather, intent handling
 ```
 

@@ -368,7 +368,7 @@ function maybeOfferLesson(baseResponse) {
     const topic = randomTopic(lastTopicId);
     pendingTeachTopic = topic;
     awaitingTeachYes = true;
-    return `${baseResponse}\n\nBy the way — would you like me to teach you about ${topic.name}? It's a great 5th grade topic.`;
+    return `${baseResponse}\n\nBy the way — would you like me to teach you about ${topic.name}?`;
   }
   return baseResponse;
 }
