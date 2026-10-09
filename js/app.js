@@ -23,6 +23,8 @@ let awaitingTeachYes = false;
 let pendingTeachTopic = null;
 let awaitingSuitChoice = false;
 let awaitingPartIdea = null;
+let awaitingHelmetFeature = false;
+let awaitingHelmetOpenChoice = false;
 
 // ---------- Clock ----------
 function tickClock() {
@@ -281,6 +283,26 @@ async function generateResponse(rawText) {
     pendingTeachTopic = null;
   }
 
+  if (awaitingHelmetOpenChoice) {
+    awaitingHelmetOpenChoice = false;
+    if (matchesAny(text, ["1", "one"])) {
+      return "Got it — Option 1: the mask flips up to open. I'll remember that design for the Helmet.";
+    }
+    if (matchesAny(text, ["2", "two"])) {
+      return "Got it — Option 2: it splits into two parts with a gear that moves it inside the helmet. I'll remember that design for the Helmet.";
+    }
+    return "Say 1 for the mask flipping up, or 2 for it splitting into two gear-driven parts.";
+  }
+
+  if (awaitingHelmetFeature) {
+    awaitingHelmetFeature = false;
+    if (matchesAny(text, ["yes", "yeah", "sure", "ok", "okay", "feature", "let's work on the feature", "lets work on the feature"])) {
+      awaitingHelmetOpenChoice = true;
+      return "Okay, how will it open — does the mask go up, or does it turn into two parts with a gear and move it inside the helmet? Say 1 or 2.";
+    }
+    return "No problem. Just say so whenever you want to work on the open-and-close feature for the helmet.";
+  }
+
   if (awaitingPartIdea) {
     const partName = awaitingPartIdea;
     awaitingPartIdea = null;
@@ -299,10 +321,7 @@ async function generateResponse(rawText) {
   if (workOnMatch) {
     const target = workOnMatch[1].replace(/[.?!]+$/, "").trim();
     const part = findSuitPart(target);
-    if (part) {
-      awaitingPartIdea = part.name;
-      return `What do you wanna do on the ${part.name}?`;
-    }
+    if (part) return startPartConversation(part);
     if (/\bsuits?\b/.test(target)) {
       awaitingSuitChoice = true;
       return "Okay, how do you want to work on the suit — look at its parts, or should we brainstorm ideas for the next suit upgrade?";
@@ -318,8 +337,7 @@ async function generateResponse(rawText) {
 
   const mentionedPart = findSuitPart(text);
   if (mentionedPart) {
-    awaitingPartIdea = mentionedPart.name;
-    return `What do you wanna do on the ${mentionedPart.name}?`;
+    return startPartConversation(mentionedPart);
   }
 
   if (matchesAny(text, ["what time", "current time", "clock"])) {
@@ -361,6 +379,15 @@ async function generateResponse(rawText) {
   }
 
   return "I'm not certain I understand that request, sir. Try asking about the time, the date, the weather, or say \"let's work on the suit.\"";
+}
+
+function startPartConversation(part) {
+  if (part.id === "helmet") {
+    awaitingHelmetFeature = true;
+    return "Okay, do you wanna work on building the open and close feature for the helmet?";
+  }
+  awaitingPartIdea = part.name;
+  return `What do you wanna do on the ${part.name}?`;
 }
 
 function teachTopic(topic) {
@@ -414,6 +441,8 @@ els.clearBtn.addEventListener("click", () => {
   pendingTeachTopic = null;
   awaitingSuitChoice = false;
   awaitingPartIdea = null;
+  awaitingHelmetFeature = false;
+  awaitingHelmetOpenChoice = false;
   greet();
 });
 
