@@ -21,6 +21,7 @@ let exchangeCount = 0;
 let lastTopicId = null;
 let awaitingTeachYes = false;
 let pendingTeachTopic = null;
+let awaitingSuitChoice = false;
 
 // ---------- Clock ----------
 function tickClock() {
@@ -279,6 +280,22 @@ async function generateResponse(rawText) {
     pendingTeachTopic = null;
   }
 
+  if (awaitingSuitChoice) {
+    awaitingSuitChoice = false;
+    if (matchesAny(text, ["jump one", "jump 1", "basics", "first suit", "origin"])) {
+      return teachTopic(findTopic("jump one"));
+    }
+    if (matchesAny(text, ["next", "new", "design", "brainstorm", "upgrade", "future", "second", "idea"])) {
+      return "Awesome, let's dream it up together. If you could give SniPer's next suit ONE new superpower or gadget, what would it be?";
+    }
+    return `Let's start with the basics then. ${teachTopic(findTopic("jump one"))}`;
+  }
+
+  if (/\bsuits?\b/i.test(text) && !findTopic(text)) {
+    awaitingSuitChoice = true;
+    return "Okay, how do you want to work on the suit first — want me to teach you the basics of Jump One, or should we brainstorm ideas for the next suit upgrade?";
+  }
+
   if (matchesAny(text, ["what time", "current time", "clock"])) {
     return `It is currently ${new Date().toLocaleTimeString([], { hour12: true })}.`;
   }
@@ -366,6 +383,7 @@ els.clearBtn.addEventListener("click", () => {
   lastTopicId = null;
   awaitingTeachYes = false;
   pendingTeachTopic = null;
+  awaitingSuitChoice = false;
   greet();
 });
 
