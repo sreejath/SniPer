@@ -74,7 +74,7 @@ function appendMessage(who, text) {
 function greet() {
   appendMessage(
     "bot",
-    "SniPer online. Good to see you. Ask me the time, the date, the weather, or say \"teach me\" followed by a topic."
+    "SniPer online. Good to see you. Ask me the time, the date, the weather, or say \"let's work on the suit\" to get started."
   );
 }
 
@@ -354,7 +354,7 @@ async function generateResponse(rawText) {
     return `I don't have a lesson on that exact topic yet, but I could teach you about ${fallback.name} instead — want me to?`;
   }
 
-  return "I'm not certain I understand that request, sir. Try asking about the time, the date, the weather, or say \"teach me\" followed by a topic.";
+  return "I'm not certain I understand that request, sir. Try asking about the time, the date, the weather, or say \"let's work on the suit.\"";
 }
 
 function teachTopic(topic) {
