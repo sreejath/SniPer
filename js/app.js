@@ -262,7 +262,7 @@ function matchesAny(text, patterns) {
 }
 
 function extractTeachTopic(text) {
-  const m = text.match(/(?:teach me|explain|tell me about|what is|what's)\s+(.*)/i);
+  const m = text.match(/(?:teach me|explain|tell me about|what is|what's|let's talk about|lets talk about|suit basics (?:on|for|about))\s+(.*)/i);
   return m ? m[1].replace(/[.?!]+$/, "").trim() : text;
 }
 
@@ -307,7 +307,7 @@ async function generateResponse(rawText) {
     return "Why did the robot go on a diet? It had too many bytes.";
   }
 
-  if (matchesAny(text, ["teach me", "explain", "tell me about", "what is", "what's", "how does", "how do"])) {
+  if (matchesAny(text, ["teach me", "explain", "tell me about", "what is", "what's", "how does", "how do", "let's talk about", "lets talk about", "suit basics"])) {
     const topicQuery = extractTeachTopic(text);
     const topic = findTopic(topicQuery) || findTopic(text);
     if (topic) return teachTopic(topic);
@@ -322,7 +322,8 @@ async function generateResponse(rawText) {
 
 function teachTopic(topic) {
   lastTopicId = topic.id;
-  return `Let's learn about ${topic.name}. ${topic.lesson} ${topic.funFact} ${topic.question}`;
+  const intro = topic.suitBasics ? `Suit Basics: ${topic.name}.` : `Let's learn about ${topic.name}.`;
+  return `${intro} ${topic.lesson} ${topic.funFact} ${topic.question}`;
 }
 
 function maybeOfferLesson(baseResponse) {
