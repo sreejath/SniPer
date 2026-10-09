@@ -22,6 +22,7 @@ let lastTopicId = null;
 let awaitingTeachYes = false;
 let pendingTeachTopic = null;
 let awaitingSuitChoice = false;
+let awaitingPartIdea = null;
 
 // ---------- Clock ----------
 function tickClock() {
@@ -280,23 +281,39 @@ async function generateResponse(rawText) {
     pendingTeachTopic = null;
   }
 
+  if (awaitingPartIdea) {
+    const partName = awaitingPartIdea;
+    awaitingPartIdea = null;
+    return `Nice idea for the ${partName}! I'll keep that in mind. Want to work on another part — just say "let's work on" and the part name.`;
+  }
+
   if (awaitingSuitChoice) {
     awaitingSuitChoice = false;
-    if (matchesAny(text, ["parts", "components", "made of", "made out of"])) {
-      return teachTopic(getTopicById("jump-one-parts"));
-    }
-    if (matchesAny(text, ["jump one", "jump 1", "basics", "first suit", "origin", "story"])) {
-      return teachTopic(getTopicById("jump-one"));
-    }
     if (matchesAny(text, ["next", "new", "design", "brainstorm", "upgrade", "future", "second", "idea"])) {
       return "Awesome, let's dream it up together. If you could give SniPer's next suit ONE new superpower or gadget, what would it be?";
     }
-    return `Let's start with the basics then. ${teachTopic(getTopicById("jump-one"))}`;
+    return teachTopic(getTopicById("jump-one-parts"));
+  }
+
+  const workOnMatch = text.match(/(?:let's work on|lets work on|work on)\s+(?:the\s+)?(.+)/i);
+  if (workOnMatch) {
+    const target = workOnMatch[1].replace(/[.?!]+$/, "").trim();
+    const part = findSuitPart(target);
+    if (part) {
+      awaitingPartIdea = part.name;
+      return `What do you wanna do on the ${part.name}?`;
+    }
+    if (/\bsuits?\b/.test(target)) {
+      awaitingSuitChoice = true;
+      return "Okay, how do you want to work on the suit — look at its parts, or should we brainstorm ideas for the next suit upgrade?";
+    }
+    const matchedTopic = findTopic(target);
+    if (matchedTopic) return teachTopic(matchedTopic);
   }
 
   if (/\bsuits?\b/i.test(text) && !findTopic(text)) {
     awaitingSuitChoice = true;
-    return "Okay, how do you want to work on the suit first — the basics (the Jump One story), its parts, or should we brainstorm ideas for the next suit upgrade?";
+    return "Okay, how do you want to work on the suit — look at its parts, or should we brainstorm ideas for the next suit upgrade?";
   }
 
   if (matchesAny(text, ["what time", "current time", "clock"])) {
@@ -387,6 +404,7 @@ els.clearBtn.addEventListener("click", () => {
   awaitingTeachYes = false;
   pendingTeachTopic = null;
   awaitingSuitChoice = false;
+  awaitingPartIdea = null;
   greet();
 });
 
