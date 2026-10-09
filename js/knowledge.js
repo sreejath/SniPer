@@ -28,6 +28,7 @@ const SUIT_PARTS = [
   { id: "gauntlets", name: "Gauntlets", keywords: ["gauntlets", "gauntlet", "gloves", "glove", "hands"] },
   { id: "boots", name: "Boots", keywords: ["boots", "boot", "thrusters", "feet"] },
   { id: "wiring-harness", name: "Wiring Harness", keywords: ["wiring harness", "wiring", "cables", "harness"] },
+  { id: "flying-system", name: "Flying System", keywords: ["flying system", "floating system", "system of floating", "flight system", "fly system", "floating", "flying"] },
 ];
 
 function findSuitPart(query) {

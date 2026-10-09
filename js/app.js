@@ -25,6 +25,7 @@ let awaitingSuitChoice = false;
 let awaitingPartIdea = null;
 let awaitingHelmetFeature = false;
 let awaitingHelmetOpenChoice = false;
+let awaitingFlyingSystemStartup = false;
 
 // ---------- Clock ----------
 function tickClock() {
@@ -283,6 +284,11 @@ async function generateResponse(rawText) {
     pendingTeachTopic = null;
   }
 
+  if (awaitingFlyingSystemStartup) {
+    awaitingFlyingSystemStartup = false;
+    return "Wow, that's amazing!";
+  }
+
   if (awaitingHelmetOpenChoice) {
     awaitingHelmetOpenChoice = false;
     if (matchesAny(text, ["1", "one"])) {
@@ -386,6 +392,10 @@ function startPartConversation(part) {
     awaitingHelmetFeature = true;
     return "Okay, do you wanna work on building the open and close feature for the helmet?";
   }
+  if (part.id === "flying-system") {
+    awaitingFlyingSystemStartup = true;
+    return "Okay, how does the system start up?";
+  }
   awaitingPartIdea = part.name;
   return `What do you wanna do on the ${part.name}?`;
 }
@@ -443,6 +453,7 @@ els.clearBtn.addEventListener("click", () => {
   awaitingPartIdea = null;
   awaitingHelmetFeature = false;
   awaitingHelmetOpenChoice = false;
+  awaitingFlyingSystemStartup = false;
   greet();
 });
 
