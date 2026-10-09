@@ -23,7 +23,7 @@ const TOPICS = [
 
 // The individual parts of SniPer's Jump One suit, for the "let's work on <part>" conversation flow.
 const SUIT_PARTS = [
-  { id: "helmet", name: "Helmet", keywords: ["helmet", "visor", "hud"] },
+  { id: "helmet", name: "Helmet", keywords: ["helmet", "visor", "hud", "mask", "face plate", "faceplate", "face shield"] },
   { id: "chest-core", name: "Chest Core", keywords: ["chest core", "chest", "core", "power cell", "power source"] },
   { id: "gauntlets", name: "Gauntlets", keywords: ["gauntlets", "gauntlet", "gloves", "glove", "hands"] },
   { id: "boots", name: "Boots", keywords: ["boots", "boot", "thrusters", "feet"] },

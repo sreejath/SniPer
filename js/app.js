@@ -316,6 +316,12 @@ async function generateResponse(rawText) {
     return "Okay, how do you want to work on the suit — look at its parts, or should we brainstorm ideas for the next suit upgrade?";
   }
 
+  const mentionedPart = findSuitPart(text);
+  if (mentionedPart) {
+    awaitingPartIdea = mentionedPart.name;
+    return `What do you wanna do on the ${mentionedPart.name}?`;
+  }
+
   if (matchesAny(text, ["what time", "current time", "clock"])) {
     return `It is currently ${new Date().toLocaleTimeString([], { hour12: true })}.`;
   }
