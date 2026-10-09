@@ -138,15 +138,38 @@ const TOPICS = [
     lesson: "Every great hero has an origin story, and SniPer's starts with a suit called Jump One. It wasn't shiny or perfect — it was built fast, under pressure, out of scrap parts and pure determination, just like Iron Man's rough-and-ready Mark I. It was clunky, the joints creaked, and it probably couldn't fly in a straight line. But it worked — and that's what mattered. Jump One proved the idea was possible, and every suit built after it got smarter, lighter, and stronger, learning from what went wrong the time before.",
     funFact: "Fun fact: real inventors almost never get it right on the first try — the first version of something is usually called a 'prototype,' and it's expected to be rough around the edges!",
     question: "Want to imagine together what SniPer's NEXT suit upgrade should be able to do?"
+  },
+  {
+    id: "jump-one-parts",
+    name: "Jump One: Suit Parts",
+    suitBasics: true,
+    keywords: ["suit parts", "parts of the suit", "what's in the suit", "whats in the suit", "suit components", "jump one parts", "parts of jump one", "what is the suit made of", "what's the suit made of"],
+    lesson: "Jump One was held together with five main parts, each a little rough around the edges. The HELMET had a cracked visor and a basic heads-up display that flickered more than it should. The CHEST CORE was the power source — a glowing, exposed power cell wired in by hand, since there wasn't time to hide the wiring neatly. The GAUNTLETS (the gloves) gave just enough grip strength to lift heavy objects, though the fingers stuck sometimes. The BOOTS had the thrusters — wobbly at first, barely strong enough to jump high rather than truly fly, which is actually where the suit got its name. And running through all of it was the WIRING HARNESS, a tangle of cables taped down in a hurry, connecting every part back to the chest core.",
+    funFact: "Fun fact: real engineers call this kind of exposed, rough wiring a 'breadboard' setup — fast to build and easy to fix, even if it looks messy!",
+    question: "Which part of Jump One do you think needs the biggest upgrade first — the helmet, the boots, or the gauntlets?"
   }
 ];
 
 function findTopic(query) {
   const q = query.toLowerCase();
-  return TOPICS.find(t => t.keywords.some(k => q.includes(k)));
+  let best = null;
+  let bestLen = 0;
+  for (const t of TOPICS) {
+    for (const k of t.keywords) {
+      if (q.includes(k) && k.length > bestLen) {
+        best = t;
+        bestLen = k.length;
+      }
+    }
+  }
+  return best;
 }
 
 function randomTopic(excludeId) {
   const pool = excludeId ? TOPICS.filter(t => t.id !== excludeId) : TOPICS;
   return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function getTopicById(id) {
+  return TOPICS.find(t => t.id === id);
 }

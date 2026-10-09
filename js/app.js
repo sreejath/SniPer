@@ -282,18 +282,21 @@ async function generateResponse(rawText) {
 
   if (awaitingSuitChoice) {
     awaitingSuitChoice = false;
-    if (matchesAny(text, ["jump one", "jump 1", "basics", "first suit", "origin"])) {
-      return teachTopic(findTopic("jump one"));
+    if (matchesAny(text, ["parts", "components", "made of", "made out of"])) {
+      return teachTopic(getTopicById("jump-one-parts"));
+    }
+    if (matchesAny(text, ["jump one", "jump 1", "basics", "first suit", "origin", "story"])) {
+      return teachTopic(getTopicById("jump-one"));
     }
     if (matchesAny(text, ["next", "new", "design", "brainstorm", "upgrade", "future", "second", "idea"])) {
       return "Awesome, let's dream it up together. If you could give SniPer's next suit ONE new superpower or gadget, what would it be?";
     }
-    return `Let's start with the basics then. ${teachTopic(findTopic("jump one"))}`;
+    return `Let's start with the basics then. ${teachTopic(getTopicById("jump-one"))}`;
   }
 
   if (/\bsuits?\b/i.test(text) && !findTopic(text)) {
     awaitingSuitChoice = true;
-    return "Okay, how do you want to work on the suit first — want me to teach you the basics of Jump One, or should we brainstorm ideas for the next suit upgrade?";
+    return "Okay, how do you want to work on the suit first — the basics (the Jump One story), its parts, or should we brainstorm ideas for the next suit upgrade?";
   }
 
   if (matchesAny(text, ["what time", "current time", "clock"])) {
