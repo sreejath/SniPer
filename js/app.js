@@ -365,6 +365,9 @@ async function generateResponse(rawText) {
 
 function teachTopic(topic) {
   lastTopicId = topic.id;
+  if (topic.id === "jump-one-parts") {
+    return "Which part do you want to work on — the helmet, chest core, gauntlets, boots, or wiring harness?";
+  }
   const intro = topic.suitBasics ? `Suit Basics: ${topic.name}.` : `Let's learn about ${topic.name}.`;
   return `${intro} ${topic.lesson} ${topic.funFact} ${topic.question}`;
 }
